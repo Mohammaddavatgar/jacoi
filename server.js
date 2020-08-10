@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
 // own imports
-const authRoute = require("./server/routers/authRoute");
+const authRoute = require("./server/auth/authRoute");
 const config = require("./config");
 
 // config

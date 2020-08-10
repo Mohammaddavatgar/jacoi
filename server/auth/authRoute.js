@@ -1,34 +1,42 @@
 const router = require("express").Router();
-const Joi = require("joi");
+const bcrypt = require("bcryptjs");
 const userModel = require("./User");
-
-const userJoi = Joi.object({
-  userName: Joi.string().min(4).max(255),
-  email: Joi.string().email().min(6).required(),
-  password: Joi.string().min(7).required(),
-});
+const { registerValidation } = require("./validation");
 
 router.post("/signup", async (req, res) => {
-  console.log("BODY : ", req);
-  const { error } = userJoi.validateAsync(req.body);
+  //validation
+  try {
+    await registerValidation(req.body);
+  } catch (err) {
+    res.json({ message: err.details[0].message, success: false });
+  }
 
-  if (error) {
-    res.status(400).json({ error, success: false });
-  } else {
-    const user = new userModel({
-      userName: req.body.userName,
-      email: req.body.email,
-      password: req.body.password,
+  //checking duplication
+  try {
+    const isDuplicate = await userModel.findOne({ email: req.body.email });
+    if (isDuplicate)
+      res.json({ message: "email already exists", success: false });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "data base error" });
+  }
+
+  // hashing password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  //creating user
+  const user = new userModel({
+    userName: req.body.userName,
+    email: req.body.email,
+    password: hashedPassword,
+  });
+  try {
+    user.save();
+    res.json({
+      success: true,
+      user,
     });
-    try {
-      user.save();
-      res.json({
-        success: true,
-        user,
-      });
-    } catch (error) {
-      res.status(400).json({ success: false });
-    }
+  } catch (error) {
+    res.status(500).json({ message: "failed to save", success: false });
   }
 });
 
