@@ -1,5 +1,4 @@
 const Joi = require("joi");
-const { func } = require("joi");
 
 async function registerValidation(data) {
   const userJoi = Joi.object({
@@ -12,3 +11,14 @@ async function registerValidation(data) {
 }
 
 module.exports.registerValidation = registerValidation;
+
+async function loginValidation(data) {
+  const userJoi = Joi.object({
+    email: Joi.string().email().min(6).required(),
+    password: Joi.string().min(7).required(),
+  });
+
+  return userJoi.validateAsync(data);
+}
+
+module.exports.loginValidation = loginValidation;

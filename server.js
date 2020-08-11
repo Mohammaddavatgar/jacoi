@@ -1,7 +1,6 @@
 // npm imports
 const express = require("express");
 const next = require("next");
-const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
