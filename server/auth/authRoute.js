@@ -69,14 +69,12 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ success: false, message: "data base error" }).end();
     return;
   }
-
   try {
-    var user = await userModel.findOne({ email: req.body.email }).password;
+    var user = await userModel.findOne({ email: req.body.email });
   } catch (err) {
     res.status(500).json({ success: false, message: "db error" }).end();
     return;
   }
-
   try {
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
@@ -87,6 +85,7 @@ router.post("/login", async (req, res) => {
       return;
     }
   } catch (err) {
+    console.log("ERR : ", err);
     res.send({ message: "unknown error", success: false }).end();
     return;
   }
