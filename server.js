@@ -20,7 +20,7 @@ const api = "/api/";
 
 app.prepare().then(() => {
   const server = express();
-  server.use(helmet());
+  // server.use(helmet());
   mongoose.connect(
     config.dbAddress,
     { useNewUrlParser: true, useUnifiedTopology: true },
