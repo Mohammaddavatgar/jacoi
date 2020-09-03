@@ -30,7 +30,6 @@ app.prepare().then(() => {
   server.use(bodyParser.json());
 
   server.use(`${api}auth`, authRoute);
-
   server.use(`${api}upload`, uploadRoute);
 
   server.all("*", (req, res) => {
